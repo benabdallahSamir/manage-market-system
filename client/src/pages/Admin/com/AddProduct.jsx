@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import Button from "../../com/Button";
-import { addProduct } from "../../../api/admin/product";
+import { addProduct, updateData } from "../../../api/admin/product";
 
 export default function AddProduct({ product = null, goback }) {
   const [ProductData, setProductData] = useState({
+    id: product ? product.id : null,
     name: product ? product.name : "",
     serialNumber: product ? product.serialNumber : [],
   });
@@ -30,7 +31,12 @@ export default function AddProduct({ product = null, goback }) {
     const input = e.target.previousElementSibling;
     const getValue = input.value ? input.value : "";
     const allSerialNumber = ProductData.serialNumber;
+    const parent = e.target.parentElement;
+
     allSerialNumber[index].name = getValue;
+    parent.classList.remove("flex");
+    parent.classList.add("hidden");
+    input.value = "";
     setProductData({ ...ProductData, serialNumber: allSerialNumber });
   };
   const changeNameContainer = (e) => {
@@ -63,16 +69,20 @@ export default function AddProduct({ product = null, goback }) {
   };
   async function submit() {
     // check data
-    if (ProductData.serialNumber.length === 0 || !ProductData.name) {
-      alert("all input are required");
-      return;
+    if (product) {
+      if (!ProductData.name) return alert("name value is required");
+
+      // sende data to api
+      console.log(product);
+      const { status, data } = await updateData(ProductData);
+      if (status !== 200) return alert(data.message);
+    } else {
+      if (!ProductData.name) return alert("name value is required");
+      // sende data to api
+      const { status, data } = await addProduct(ProductData);
+      if (status !== 200) return alert(data.message);
     }
-    // sende data to api
-    const { status, data } = await addProduct(ProductData);
-    if (status === 200) {
-      return goback();
-    }
-    alert(data.data);
+    goback();
   }
   return (
     <div className="absolute top-0 left-0 w-full h-full bg-black/20 grid place-items-center">
@@ -93,6 +103,9 @@ export default function AddProduct({ product = null, goback }) {
                 type="text"
                 className="border p-2 rounded w-full outline-none focus:border-blue-500"
                 id="serialNumber"
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") addSerialNumber();
+                }}
                 ref={serialNumberRef}
               />
               <Button
@@ -136,7 +149,7 @@ export default function AddProduct({ product = null, goback }) {
                 >
                   {sn.name || "with out name"}
                 </span>
-                <div className="items-center hiddend ml-3">
+                <div className="items-center hidden ml-3">
                   <input
                     type="text"
                     className="w-40 outline-none border rounded focus:border-blue-500 px-2"
