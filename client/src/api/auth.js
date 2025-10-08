@@ -6,7 +6,7 @@ export async function login(username, password) {
       username: username,
       password,
     });
-    console.log(res)
+    console.log(res);
     return { status: res.status, data: res.data };
   } catch (error) {
     console.log(error);
@@ -17,4 +17,9 @@ export async function login(username, password) {
       };
     return { status: 10 };
   }
+}
+export async function logoutAccount() {
+  try {
+    await axios.get(`${API_URL}/auth/logout`);
+  } catch (error) {}
 }

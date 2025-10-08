@@ -8,7 +8,18 @@ import Product from "./pages/Admin/Product.jsx";
 import Employee from "./pages/Admin/Employee.jsx";
 import Contacts from "./pages/Admin/Contacts.jsx";
 import AdminAccount from "./pages/Admin/AdminAccount.jsx";
+import { useState } from "react";
+import { useEffect } from "react";
+import { logoutAccount } from "./api/auth.js";
 export default function App() {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    (async () => {
+      await logoutAccount();
+      setLoading(false);
+    })();
+  }, []);
+  if (loading) return <div>loading</div>;
   return (
     <div className="min-h-screen">
       <Routes>

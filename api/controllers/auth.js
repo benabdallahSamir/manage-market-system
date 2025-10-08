@@ -23,3 +23,6 @@ export async function login(req, res) {
     return res.status(505).send({ message: "internal server error" });
   }
 }
+export async function logout(req,res) {
+    res.status(200).send({message : "logout"})
+}
