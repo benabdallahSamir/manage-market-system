@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import Button from "../../com/Button";
-import { addUsers } from "../../../api/admin/employee";
+import { addUsers, updateUser } from "../../../api/admin/employee";
 
 export default function AddEmplyee({ goBack, user }) {
-  const [data, setData] = useState({ username: "", password: "" });
-  useEffect(() => {
-    if (user) setData({ username: user.username, password: "" });
-  }, []);
+  const [data, setData] = useState({
+    username: user?.username ? user.username : "",
+    password: "",
+  });
   async function submit() {
     if (!data.username || !data.password) return alert("all input required");
     if (user) {
+      const res = await updateUser(data);
+      if (res.status !== 200) return alert(res.message);
     } else {
       const res = await addUsers(data);
       if (res.status !== 200) return alert(res.message);
@@ -32,7 +34,9 @@ export default function AddEmplyee({ goBack, user }) {
         variant="no-bg-hover"
       />
       <div className="w-[400px] min-h-[300px] gap-4 flex flex-col bg-white rounded-2xl p-4">
-        <h1 className="text-center text-3xl">Add new employee</h1>
+        <h1 className="text-center text-3xl">
+          {user ? "Update employee" : "Add new employee"}
+        </h1>
         <div className="flex flex-col">
           <label htmlFor="username" className="cursor-pointer">
             Username :
