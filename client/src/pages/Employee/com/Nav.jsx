@@ -16,70 +16,42 @@ function NavButton({ keyName, className, title, onClick, ref }) {
   );
 }
 
-export default function Nav() {
-  // element
-  const container = useRef();
-  const SubmitAndPrint = useRef();
-  const Submit = useRef();
-  const Search = useRef();
-  const printPrices = useRef();
+export default function Nav({
+  SubmitClick,
+  printPricesClick,
+  SubmitAndPrintClick,
+  ClearPage,
+  searchClick,
+}) {
   // vars
   const u = useSelector((s) => s.user);
-  console.log(u);
   const isAdmin = u ? u.role : false;
-  // const isAdmin = false;
 
   const router = useNavigate();
   // events
-  function SubmitAndPrintClick() {
-    alert("print and submit");
-  }
-  function searchClick() {
-    alert("search");
-  }
-  function printPricesClick() {
-    alert("print prices");
-  }
-
-  function SubmitClick() {
-    alert("submit");
-  }
 
   function logout() {
     router("/");
   }
+
   // element
   return (
-    <div
-      className="h-20 shadow-lg flex items-center px-2 py-1 gap-2"
-      ref={container}
-    >
-      <NavButton
-        keyName={"f1"}
-        onClick={searchClick}
-        ref={Search}
-        title={"Search"}
-      />
+    <div className="h-20 shadow-lg flex items-center px-2 py-1 gap-2">
+      <NavButton keyName={"f1"} onClick={searchClick} title={"Search"} />
 
       <NavButton
         keyName={"f2"}
         onClick={SubmitAndPrintClick}
-        ref={SubmitAndPrint}
         title={"submit & print"}
       />
 
       <NavButton
         keyName={"f3"}
         onClick={printPricesClick}
-        ref={printPrices}
         title={"print prices"}
       />
-      <NavButton
-        keyName={"f4"}
-        onClick={SubmitClick}
-        ref={Submit}
-        title={"Submit"}
-      />
+      <NavButton keyName={"f4"} onClick={SubmitClick} title={"Submit"} />
+      <NavButton keyName={"f5"} onClick={ClearPage} title={"clear"} />
 
       <Button
         text={"Logout"}
