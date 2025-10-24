@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../../com/Button";
 import { addProduct, updateData } from "../../../api/admin/product";
 
@@ -8,6 +8,7 @@ export default function AddProduct({ product = null, goback }) {
     name: product ? product.name : "",
     serialNumber: product ? product.serialNumber : [],
   });
+  let codeBar = "";
   const serialNumberRef = useRef();
   const onchange = (e) => {
     setProductData({ ...ProductData, [e.target.id]: e.target.value });
@@ -28,7 +29,12 @@ export default function AddProduct({ product = null, goback }) {
     }
   };
   const changeName = (e, index) => {
-    const input = e.target.previousElementSibling;
+    let input = null;
+    if (e.target.getAttribute("data-type") === "input") {
+      input = e.target;
+    } else {
+      input = e.target.previousElementSibling;
+    }
     const getValue = input.value ? input.value : "";
     const allSerialNumber = ProductData.serialNumber;
     const parent = e.target.parentElement;
@@ -43,30 +49,30 @@ export default function AddProduct({ product = null, goback }) {
     e.target.nextElementSibling.classList.remove("hidden");
     e.target.nextElementSibling.classList.add("flex");
   };
-  const addSerialNumber = () => {
+  function addSerialNumber() {
     try {
       if (serialNumberRef.current === null) return;
       const serial = serialNumberRef.current.value;
       if (!serial) return;
-      if (!ProductData.serialNumber.includes(serial)) {
-        const newSerials = ProductData.serialNumber;
-        if (newSerials.includes(serial)) {
-          alert("Serial number already exists.");
-          return;
-        }
-        newSerials.push({ number: serial, name: "" });
-        setProductData((curr) => {
-          return {
-            ...curr,
-            serialNumber: newSerials,
-          };
-        });
+      const newSerials = ProductData.serialNumber;
+      const isExist = newSerials.filter((ele) => ele.number === serial).length;
+
+      if (isExist !== 0) {
+        alert("this code is exist");
+        return;
       }
+      newSerials.push({ number: serial, name: "" });
+      setProductData((curr) => {
+        return {
+          ...curr,
+          serialNumber: newSerials,
+        };
+      });
       serialNumberRef.current.value = "";
     } catch (error) {
       console.error(error);
     }
-  };
+  }
   async function submit() {
     // check data
     if (product) {
@@ -84,6 +90,36 @@ export default function AddProduct({ product = null, goback }) {
     }
     goback();
   }
+  function setNumber(key) {
+    codeBar += key;
+  }
+  useEffect(() => {
+    window.onkeyup = (e) => {
+      const key = e.key;
+      if (!isNaN(key)) {
+        setNumber(key);
+      } else if (key.toLowerCase() === "enter") {
+        const newSerials = ProductData.serialNumber;
+        const isExist = newSerials.filter(
+          (ele) => ele.number === serial
+        ).length;
+
+        if (isExist !== 0) {
+          alert("this code is exist");
+          return;
+        }
+        newSerials.push({ number: codeBar, name: "" });
+        setProductData((curr) => {
+          return {
+            ...curr,
+            serialNumber: newSerials,
+          };
+        });
+        codeBar = "";
+      }
+    };
+  }, []);
+
   return (
     <div className="absolute top-0 left-0 w-full h-full bg-black/20 grid place-items-center">
       <Button
@@ -152,6 +188,10 @@ export default function AddProduct({ product = null, goback }) {
                 <div className="items-center hidden ml-3">
                   <input
                     type="text"
+                    data-type="input"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") changeName(e, index);
+                    }}
                     className="w-40 outline-none border rounded focus:border-blue-500 px-2"
                   />
                   <Button
