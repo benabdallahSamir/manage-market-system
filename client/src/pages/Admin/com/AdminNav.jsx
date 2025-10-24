@@ -11,16 +11,14 @@ export default function AdminNav() {
   function changePages(page) {
     setCurrentPage(page);
   }
-  function goback() {
-    router("/main");
-  }
+
   return (
     <div className="w-[300px] px-2 flex flex-col py-4 gap-3 border-r">
       <Button
         variant="no-bg-hover"
         className={"w-max"}
         text={"go back"}
-        onclick={goback}
+        onclick={() => changePages("/main")}
       />
       <Button
         className={`justify-start hover:border border-gray-400 ${
