@@ -19,7 +19,9 @@ function NavButton({ keyName, className, title, onClick, ref }) {
 export default function Nav({
   SubmitClick,
   printPricesClick,
+  NewEmptyBon,
   SubmitAndPrintClick,
+  SpecifiquePrice,
   ClearPage,
   searchClick,
 }) {
@@ -52,6 +54,8 @@ export default function Nav({
       />
       <NavButton keyName={"f4"} onClick={SubmitClick} title={"Submit"} />
       <NavButton keyName={"f5"} onClick={ClearPage} title={"clear"} />
+      <NavButton keyName={"f6"} onClick={SpecifiquePrice} title={"price"} />
+      <NavButton keyName={"f7"} onClick={NewEmptyBon} title={"price"} />
 
       <Button
         text={"Logout"}

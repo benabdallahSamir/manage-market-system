@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
 import Button from "./Button";
-import axios from "axios";
 import { searchProduct } from "../../api/admin/product";
-import product from "../../../../api/models/Product";
 
 export default function SearchPage({ setValue, goback }) {
+  
   const [query, setQuery] = useState("");
   const [searchResult, setSearchResult] = useState([]);
+
   useEffect(() => {
     if (!query) return setSearchResult([]);
     (async () => {
       const { status, data } = await searchProduct(query);
-      console.log(data)
+      console.log(data);
       if (status === 200) setSearchResult(data.products);
-      
     })();
   }, [query]);
+
   function selectProduct(product) {
     setValue(product);
     goback();
   }
+
   return (
     <div className="absolute top-0 left-0 w-screen h-screen bg-gray-400/30 grid place-items-center">
       <Button

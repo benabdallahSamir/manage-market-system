@@ -60,3 +60,36 @@ export async function searchProduct(query) {
     return { status: 10, data: error.message };
   }
 }
+
+export async function productList() {
+  try {
+    const { status, data } = await axios.get(`${API_URL}/product/noCodeBar`);
+    return { status, data };
+  } catch (error) {
+    console.log(error);
+    if (error.response)
+      return {
+        data: error.response.data.message,
+        status: error.response.status,
+      };
+    return { status: 10, data: error.message };
+  }
+}
+
+export async function toggleListofProduct(productId) {
+  try {
+    const { status, data } = await axios.put(
+      `${API_URL}/product/toggleShortCut`,
+      { productId }
+    );
+    return { status, data };
+  } catch (error) {
+    console.log(error);
+    if (error.response)
+      return {
+        data: error.response.data.message,
+        status: error.response.status,
+      };
+    return { status: 10, data: error.message };
+  }
+}
