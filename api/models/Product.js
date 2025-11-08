@@ -5,6 +5,7 @@ const schema = new mongoose.Schema({
   name: String,
   purchassPrice: { type: Number, default: 0 },
   sellPrice: { type: Number, default: 0 },
+  hasShortCut: { type: Boolean, default: false },
 });
 
 const product = mongoose.model("product", schema);
