@@ -53,11 +53,53 @@ export async function updateProduct(req, res) {
     if (!existingProduct)
       return res.status(400).send({ message: "Product not found" });
     if (name) existingProduct.name = name;
-    if (typeof serialNumber === "object") existingProduct.serialNumber = serialNumber;
+    if (typeof serialNumber === "object")
+      existingProduct.serialNumber = serialNumber;
     const updatedProduct = await existingProduct.save();
     res.status(200).send({ product: handleProduct(updatedProduct) });
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: error.message });
+  }
+}
+
+export async function noCodeBar(req, res) {
+  try {
+    const allProducts = await product.find({
+      $or: [{ serialNumber: [] }, { hasShortCut: true }],
+    });
+    const shortCut = [];
+    const noCodeBarProduct = allProducts
+      .map((p) => {
+        if (p.serialNumber.length === 0) return handleProduct(p);
+        shortCut.push(handleProduct(p));
+      })
+      .filter((ele) => ele);
+    console.log(noCodeBarProduct);
+    res.status(200).send({ noCodeBarProduct, shortCut });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "internal server error" });
+  }
+}
+
+export async function toggleShortCut(req, res) {
+  try {
+    const { productId } = req.body;
+    if (!productId)
+      return res.status(400).send({ message: "productId not found" });
+    const isProductExist = await product.findById(productId);
+
+    if (!isProductExist)
+      return res.statsu(404).send({ message: "product not found" });
+
+    if (isProductExist.serialNumber.length === 0)
+      return res.status(400).send({ message: "product is exist by default" });
+    isProductExist.hasShortCut = !isProductExist.hasShortCut;
+    await isProductExist.save();
+    res.status(200).send(isProductExist);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "internal server error" });
   }
 }
